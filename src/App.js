@@ -1,12 +1,21 @@
- import MenuBar from "./MenuBar";
- import styled from "styled-components";
+//react functionality
+import { useEffect, useContext } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {styled, keyframes} from 'styled-components';
 
+//created components
+import GlobalStyles from './GlobalStyles';
+import MenuBar from './MenuBar';
+import MainDisplay from './MainDisplay'; 
+
+///function start
 function App() {
   return (
-    <MainAppDiv className="App"> 
-      <MenuBar/>
-
+    <> 
+    <GlobalStyles/> 
+    <MainAppDiv className="App">  
     </MainAppDiv>
+    </>
   );
 }
 
