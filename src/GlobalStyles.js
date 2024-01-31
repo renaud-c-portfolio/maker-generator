@@ -1,6 +1,8 @@
 import { createGlobalStyle } from 'styled-components'; 
 import warlocksUrl from './fonts/warlocksale.ttf' 
 import epicUrl from './fonts/epicslap.otf' 
+import zero4BUrl from './fonts/zero4B_03_.ttf' 
+import superstarUrl from './fonts/superstar.ttf' 
 
 export default createGlobalStyle` 
 
@@ -9,7 +11,21 @@ export default createGlobalStyle`
     min-height: 100%;
     height: 100%;
   }
-  
+
+  @font-face {
+  font-family: 'superstar';
+  src: url(${superstarUrl}) format('truetype');
+  /* other formats include: 'woff2', 'truetype, 'opentype',
+                            'embedded-opentype', and 'svg' */
+}
+
+  @font-face {
+  font-family: 'zero4B';
+  src: url(${zero4BUrl}) format('truetype');
+  /* other formats include: 'woff2', 'truetype, 'opentype',
+                            'embedded-opentype', and 'svg' */
+}
+ 
   @font-face {
   font-family: 'warlocks-ale';
   src: url(${warlocksUrl}) format('truetype');
@@ -41,7 +57,8 @@ export default createGlobalStyle`
   article, aside, canvas, details, embed,
   figure, figcaption, footer, header, hgroup,
   menu, nav, output, ruby, section, summary,
-  time, mark, audio, video, svg, button, input {
+  time, mark, audio, video, svg, button, input, select, option {
+    font-family: zero4B;
     margin: 0;
     padding: 0;
     border: 0;
@@ -96,7 +113,7 @@ export default createGlobalStyle`
     pointer-events: none;
     width: 102%;
     height: 103%;
-    border-radius: 14px; 
+    border-radius: inherit; 
     position: absolute; 
     z-index: 0;
     top: -1.5%;

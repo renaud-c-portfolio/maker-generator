@@ -14,6 +14,8 @@ function App() {
     <> 
     <GlobalStyles/> 
     <MainAppDiv className="App">  
+      <MenuBar/>
+      <MainDisplay/>
     </MainAppDiv>
     </>
   );
@@ -22,6 +24,8 @@ function App() {
 const MainAppDiv = styled.div`
 width:100vw;
 height: 100vh;
+display: flex;
+flex-direction: column;
 background: black;
 color:white;
 `

@@ -2,7 +2,19 @@ import { useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {styled, keyframes} from 'styled-components'; 
 
+import { AppContext } from './AppContext';
+
 const MenuBar = () =>{
+    
+ 
+    const {
+        actions: {   
+            getNewResult,
+        },
+        state: { 
+            currentResult,
+        },
+    } = useContext(AppContext);
 
 
     return (
@@ -20,10 +32,15 @@ const MenuBar = () =>{
                     <MediaOption>boardgame</MediaOption>
                     <MediaOption>story</MediaOption>
                     <MediaOption>character design</MediaOption>
+                    <MediaOption>creature design</MediaOption>
                 </MediaSelect></span>
                 </BarButtonDiv>
 
-                <BarButtonDiv>Global</BarButtonDiv>
+                <BarButtonDiv
+                    onClick={()=>{
+                        getNewResult(11115);
+                    }}
+                >Global</BarButtonDiv>
                 <BarButtonDiv>Personal</BarButtonDiv>
                 <BarButtonDiv>Projects only</BarButtonDiv>
                 <BarButtonDiv>Setup Projects</BarButtonDiv> 
@@ -34,11 +51,14 @@ const MenuBar = () =>{
               <DailyButtonDiv
               style={{fontSize:"5vh"}}
                > 
-                        <AbsButton className="glow"  >
-                            <AbsButton className=""> 
+                        <AbsButton 
+                        {...( currentResult.rarity === 1 ?{className:"glow"}:{})}  
+                        
+                        >
+                            <AbsButton > 
                                     Daily
-                                    <AbsButton 
-                                    className="glower"
+                                    <AbsButton  
+                                    {...( currentResult.rarity === 1 ?{className:"glower"}:{})}  
                                     >
                                     Daily
                                     </AbsButton>
@@ -61,7 +81,7 @@ const MenuBar = () =>{
 
 const FirstBarDiv = styled.div`
 width:84%;
-height:8vh; 
+height:6vh; 
 display: flex;
 flex-direction: row; 
 justify-content: space-around;
@@ -75,7 +95,7 @@ padding-right:12%;
 const SecondBarDiv = styled.div`
 border-top: 1px solid white;
 width:98%;
-height:12vh; 
+height:9vh; 
 padding-bottom: 1vh;
 display: flex;
 flex-direction: row; 
@@ -83,12 +103,10 @@ justify-content: space-around;
 align-items: end;
 background-color: #232323; 
 `
-
  
 
 const BarDiv = styled.div`
-width:100%; 
-position: absolute;
+width:100%;  
 z-index: 2;
 display: flex;
 flex-direction: column; 
@@ -113,6 +131,7 @@ background-color: black;
 `
 
 const MediaOption = styled.option`
+font-family: zero4B, '04b03', arial;
 border: 2px solid orange; 
 ` 
 
@@ -132,10 +151,11 @@ align-items: center;
 text-align: center;
 display: flex; 
 &.glow{ 
-
+ 
 }
  &.glower{  
-     -webkit-background-clip: text;
+    background-clip:text;
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;    
     animation: glowbe 6s ease-in-out infinite;
     background-image: linear-gradient(
@@ -146,10 +166,10 @@ display: flex;
 
 const DailyButtonDiv = styled.div`   
  
-    border-radius: 14px; 
-  border-radius: 10px; 
-  padding: 0 50px 0 50px;
-  position: relative;     
+border-radius: 14px; 
+border-radius: 10px; 
+padding: 0 50px 0 50px;
+position: relative;     
 cursor:pointer;
 font-size:2.8vh;
 width:15%;
