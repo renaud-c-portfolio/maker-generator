@@ -2,67 +2,106 @@
 const data = {
 
     keywords:[
+
         "none",
+ 
         "genre", 
         "theme",
         "adject",
+        "genreAdject",
         "create",
         "think",
+
         "bigCat",
         "medCat",
         "miniCat",
+
         "specialCat",
         "media",
         "theming",
 
-        "place",
         "character",
+        "tool",
+        "action",
+
+        "place",
+        "placeAdject",
+        "placeUnique",
+        "placeStart",
+
+        "focusing",
+
     ],
 
-    mainStruct:[
+    mainStruct:[ 
+        "@create# @adject# @genre# @theming#",
         "@create# @specialCat# @genre# @theming#",
         "@create# @genre#... except it's also a @genre#!",
-        "invent a new genre, a @adject#@media# @think# @medCat#", 
+        "invent a new genre, a @adject#@media# @think# @bigCat#", 
     ],
 
     subStruct:[
         "an excuse to make @miniCat#",
-        "initially about @theme#s but then @theme#s!", 
-        "the @place# is invaded by @character#s!"
+        "initially about $allThemes#s but then $allThemes#s!", 
+        "@placeStart# $manyMaybePlaces#... @action# the $allThemes#!",
+        "$manyMaybePlaces# invaded by $charMaybePlural#!",
+        "everything should be @adject#!",
     ],
 
-    detailStruct:[
+    detailStruct:[  
         "the @medCat# is @miniCat#!",
-        "@bigCat# focuses on @theme#",
+        "@bigCat# focuses on $allThemes#s", 
+        "choose between @tool#, @tool# and @tool#!",
+        "@focusing# $allCats#", 
+        "@placeStart# $manyMaybePlaces",
+    ], 
+
+    correction:[
+        ["ultramans","ultramen"], 
+        ["city","cities"],
     ],
 
-    none:1,
-    genre: 17,
-
-    bigCat: 8,
-    medCat: 8,
-    miniCat: 8,
-
-    specialCat:10,
-    
-    adject: 32,
-    create: 8,
-    think: 3,
-    media:4,
-    theme:8,
-    theming:8,
-
-    place:8,
-    character:8,
-
-    packages:{
+    packages:{ 
+         charMaybePlural:["$pronounSingular# $maybeAdject#@character#","$pronounPlural# $maybeAdject#@character#s"],
+         manyMaybePlaces:["$pronounSingular# $maybePlaceAdject#@place#","$pronounPlural# $maybePlaceAdject#@place#s","$pronounSingular# $maybePlaceAdject#@place#","$pronounPlural# $maybePlaceAdject#@place#s","@placeUnique#"],
+         maybePlaceAdject:["","@adject#","@placeAdject#"],
+         maybeAdject:["","@adject#"],
+         placeAndUnique:["@place#","@place#","@placeUnique#"],
          allThemes:["@character#","@tool#","@place#"],
+         allCats:["@bigCat#","@medCat#","@miniCat#"],
+         bigAndSmall:["@bigCat#","@miniCat#"],
+         bigAndMed:["@bigCat#","@medCat#"],
+         smallAndMed:["@miniCat#","@medCat#"],
+         pronounPlural:["","","the","the","our","your","many","countless","infinite"],
+         pronounSingular:["a","a","the","the","your"],
     },
 
     videogame:{
 
         none:[""],
 
+
+        focusing:["brainstorm the","find a different way to do","avoid","Basically just","Focus on","No matter what, don't put in","Consider adding","Gameplay revolves around","With basic-ass","Use an original way to do"],
+
+
+        placeStart:[
+            "",
+            "",
+            "",
+            "in ",
+            "explore ",
+            "travel to ",
+            "conquest of ",
+            "build your home in ",
+            "make your home in ",
+            "go to ",
+            "escape from ",
+            "everything is in ",
+            "visit ",
+            "road to ",
+            "finally leave ",
+        ],
+ 
         create:[
             "craft a",
             "handmake a",
@@ -76,18 +115,21 @@ const data = {
         ],
 
         theming:[
-            "about @theme#s",
-            "about a @theme#",
-            "about... @theme#s!",
-            "about making @theme#s",
-            "with theme: @theme#s",
-            "about fighting @theme#s",
-            "starring a @theme#",
-            "starring @theme#s",
-            "secretly about  @theme#s",
-            "about collecting  @theme#s",
+            "about $allThemes#s",
+            "about a $allThemes#",
+            "about... $allThemes#s!",
+            "about making $allThemes#s",
+            "with theme: $allThemes#s",
+            "about fighting $charMaybePlural#",
+            "starring a @character#",
+            "starring @character#s",
+            "secretly about  $allThemes#s",
+            "about collecting  $allThemes#s",
         ],
+
         media:[
+            "game",
+            "game",
             "game",
             "game",
             "competitive game",
@@ -105,11 +147,12 @@ const data = {
         
 
         genre: [
+            "topdown @genre#",
+            "sidescrolling @genre#",
             "autobattler",
             "platformer",
             "jrpg",
             "soulslike",
-            "topdown",
             "beat'em up",
             "fighting game",
             "shmup", 
@@ -138,7 +181,9 @@ const data = {
             "rpg-elements",
             "co-op",
             "competitive",
-            "assymetric-multiplayer"
+            "assymetric-multiplayer",
+            "run-based",
+            "randomly generated",
         ],
 
         bigCat: [
@@ -158,7 +203,7 @@ const data = {
             "headshots",
             "critical hits",
             "cooking",
-            "monsterhunter grind",
+            "monsterhunter-style grind",
             "special super attacks",
             "no-recipe mixing",
             "unclear openworld",
@@ -193,14 +238,27 @@ const data = {
         ],
 
         character: [
+            "aardvark",
+            "ookapi",
+            "ultraman",
+            "electric eel",
+            "albatross",
             "baboon",
             "gorilla",
             "monkey",
             "cat",
             "orangutan",
             "robot",
+            "giant robot",
             "dark lord",
-            "demon",  
+            "demon",
+            "anime maid",
+            "primordial beast",
+            "animal",
+            "giant",
+            "boyfriend",
+            "girlfriend",
+            "bride",
         ],
 
         theme: [
@@ -214,11 +272,18 @@ const data = {
             "demon",  
         ],
 
-        adject:[
-            "",
-            "",
+        genreAdject: [
             "nonrandom ", 
+            "randomly generated ",
+            "boss ",
+            "final boss ", 
+        ],
 
+        adject:[ 
+            "@genreAdject#",
+            "@genreAdject#",
+            "sci-@adject#",
+            "sci-",
             "kawaii ",
             "shining ",
             "burning ",
@@ -229,9 +294,7 @@ const data = {
             "dream ",
             "horror ",
             "spooky ",
-            "spicy ",
-            "sci- ",
-            "sci-@adject#",
+            "spicy ", 
             "bug ",
             "bone ",
             "blood ",
@@ -247,31 +310,140 @@ const data = {
             "exaggerated ",
             "cyborg ",
             "cyber",
+            "mecha",
             "robo",
             "world-destroying ",
             "eco-friendly ",
             "romantic ",
+            "giga",
             "giga-banana ",
             "super auto ",
+            "giant ",
+        ],
+
+        action:[
+            "find",
+            "destroy",
+            "purify",
+            "grow",
+            "evolve",
+            "equip",
+            "upgrade"
         ],
 
         tool:[
-             
+             "drill",
+             "big sword", 
+             "frozen tuna",
+             "bone-in-meat",
+             "firebreath",
+             "pincer",
+             "huge robot arm",
+             "mallet",
+             "maid dress",
+             "claw",
+             "fang",
+             "tree trunk",
+             "shotgun",
+             "wave cannon",
+             "gatling gun",
+             "hand",
+             "fist",
+             "frog",
+             "laser",
+             "laser @tool#",
+             "spiked club",
+             "flame",
+             "horns",
+             "melon",
+             "curse",
+             "bugs", 
+             "boomerang",
+             "cat",
+             "crab",
+             "heavenly lightning",
+             "stardust",
+             "monster transformation",
+             "scimitar",
+             "real japanese katana",
+             "ultra greatsword",
+             "robot suit",
+             "cactus",
+             "alien parasite",
+             "anti-tank rifle",
+             "centipede",
+             "muscle body",
+        ],
+
+        placeAdject:[
+            "hallowed ",
+            "ruined ",
+            "cursed ",
+            "vast ",
+            "deep ",
+            "endless ",
+
         ],
 
         place:[
              "earth",
-             "world tree",
-             "earth",
-             "world tree",
-             "earth",
-             "world tree",
-             "earth",
-             "world tree",
-
+             "world tree", 
+             "castle",
+             "great lake",
+             "savannah",
+             "jungle",
+             "cave",
+             "forest", 
+             "temple",
+             "planet",
+             "galaxy",
+             "@adject#zone", 
+             "night club",
+             "social media",
+             "skeleton world",
+             "capital",
+             "hell",
+             "heck",
+             "buttfuck nowhere",
+             "big mountain",
+             "sea",
+             "underground city",
+             "ancient babylon",
         ],
 
-    }
+        placeUnique:[
+            "a large mall",
+            "the ocean",
+            "planet X",
+            "the dark recesses of the mind",
+            "montreal",
+            "tokyo",
+            "neo kobe city",
+            "new neo new york",
+        ]
+ 
+
+    },
+    none:1,
+    genre: 17,
+
+    bigCat: 8,
+    medCat: 8,
+    miniCat: 8,
+
+    specialCat:10,
+    
+    adject: 31,
+    genreAdject: 1,
+    create: 8,
+    think: 3,
+    media:4,
+    theme:8,
+    theming:8, 
+
+    place:8,
+    character:8,
+    tool:8,
 }
 
 export default data

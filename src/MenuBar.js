@@ -10,12 +10,20 @@ const MenuBar = () =>{
     const {
         actions: {   
             getNewResult,
+            setDate,
         },
         state: { 
             currentResult,
+            globalTime,
+            
         },
-    } = useContext(AppContext);
+    } = useContext(AppContext);n
 
+    useEffect(
+        ()=>{
+            setDate();
+        }
+    ,[])
 
     return (
         <> 
@@ -69,6 +77,7 @@ const MenuBar = () =>{
               <BarButtonDiv>Monthly</BarButtonDiv>
               <BarButtonDiv>Seasonal</BarButtonDiv>
               <BarButtonDiv>Yearly</BarButtonDiv>
+              <BarButtonDiv>{globalTime}</BarButtonDiv>
               <div></div>
               <div></div>
               <div></div>
