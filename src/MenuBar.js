@@ -11,13 +11,16 @@ const MenuBar = () =>{
         actions: {   
             getNewResult,
             setDate,
+            changeProject, changeTime, 
+            setSeedRandom, randomer,
         },
         state: { 
             currentResult,
             globalTime,
+            timeSelected, projectsSelected,
             
         },
-    } = useContext(AppContext);n
+    } = useContext(AppContext);
 
     useEffect(
         ()=>{
@@ -25,11 +28,17 @@ const MenuBar = () =>{
         }
     ,[])
 
+    useEffect(
+        ()=>{ 
+            setSeedRandom();
+        }
+    ,[globalTime])
+
     return (
         <> 
         <BarDiv>
             <FirstBarDiv>
-                <BarButtonDiv 
+                <OtherBarDiv 
                 onClick={()=>{}}
                 >
                     
@@ -42,15 +51,29 @@ const MenuBar = () =>{
                     <MediaOption>character design</MediaOption>
                     <MediaOption>creature design</MediaOption>
                 </MediaSelect></span>
-                </BarButtonDiv>
+                </OtherBarDiv>
 
                 <BarButtonDiv
                     onClick={()=>{
-                        getNewResult(11115);
+                        changeProject("global");
+                        getNewResult(1);
                     }}
-                >Global</BarButtonDiv>
-                <BarButtonDiv>Personal</BarButtonDiv>
-                <BarButtonDiv>Projects only</BarButtonDiv>
+                    {...( projectsSelected === "global" ? {className:"selected"}:{})}
+                    >Global</BarButtonDiv>
+                <BarButtonDiv
+                    onClick={()=>{
+                        changeProject("personal");
+                        getNewResult(1);
+                    }}
+                    {...( projectsSelected === "personal" ? {className:"selected"}:{})}
+                >Personal</BarButtonDiv>
+                <BarButtonDiv
+                    onClick={()=>{
+                        changeProject("project");
+                        getNewResult(1);
+                    }}
+                    {...( projectsSelected === "project" ? {className:"selected"}:{})}
+                >Projects only</BarButtonDiv>
                 <BarButtonDiv>Setup Projects</BarButtonDiv> 
                 <BarButtonDiv>History</BarButtonDiv> 
             </FirstBarDiv>
@@ -66,19 +89,49 @@ const MenuBar = () =>{
                             <AbsButton > 
                                     Daily
                                     <AbsButton  
+                                    onClick={()=>{ changeTime("daily");  
+                                    getNewResult(1);}}
                                     {...( currentResult.rarity === 1 ?{className:"glower"}:{})}  
+                                    {...( timeSelected === "daily" ? {className:"selected"}:{})}
                                     >
+                                    <ExclamationDiv >!New</ExclamationDiv>
                                     Daily
-                                    </AbsButton>
+                                    </AbsButton> 
                             </AbsButton>
                             </AbsButton> 
                 </DailyButtonDiv>
-              <BarButtonDiv>Weekly</BarButtonDiv>
-              <BarButtonDiv>Monthly</BarButtonDiv>
-              <BarButtonDiv>Seasonal</BarButtonDiv>
-              <BarButtonDiv>Yearly</BarButtonDiv>
-              <BarButtonDiv>{globalTime}</BarButtonDiv>
-              <div></div>
+
+              <BarButtonDiv
+              onClick={()=>{ changeTime("weekly");  
+              getNewResult(1);}}
+              {...( timeSelected === "weekly" ? {className:"selected"}:{})}
+              >Weekly</BarButtonDiv>
+              <BarButtonDiv
+              onClick={()=>{ changeTime("monthly");  
+              getNewResult(1);}}
+              {...( timeSelected === "monthly" ? {className:"selected"}:{})}
+              >Monthly</BarButtonDiv>
+              <BarButtonDiv
+              onClick={()=>{ changeTime("seasonal");  
+              getNewResult(1);}}
+              {...( timeSelected === "seasonal" ? {className:"selected"}:{})}
+              >Seasonal</BarButtonDiv>
+              <BarButtonDiv
+              onClick={()=>{ changeTime("yearly");  
+              getNewResult(1);}}
+              {...( timeSelected === "yearly" ? {className:"selected"}:{})}
+              >Yearly</BarButtonDiv>
+              <div
+              onClick={
+                ()=>{ 
+                    randomer(10); 
+                }
+              }
+              >{ 
+                ( globalTime != "" &&  <>{globalTime.toLocaleDateString()}</>)
+                
+              }</div>
+               
               <div></div>
               <div></div>
         </SecondBarDiv>
@@ -105,7 +158,7 @@ const SecondBarDiv = styled.div`
 border-top: 1px solid white;
 width:98%;
 height:9vh; 
-padding-bottom: 1vh;
+padding-bottom: 1.6vh;
 display: flex;
 flex-direction: row; 
 justify-content: space-around; 
@@ -144,6 +197,20 @@ font-family: zero4B, '04b03', arial;
 border: 2px solid orange; 
 ` 
 
+const ExclamationDiv = styled.div`
+position: absolute;
+width: 100%;
+text-align: right;
+margin-right:20vh;
+margin-bottom: 2vh;
+font-size: 2vh;
+color: #ff2277;
+background-clip: unset;
+-webkit-background-clip: unset;
+-webkit-text-fill-color: unset;    
+
+`
+
 const AbsButton = styled.div`  
 font-size: 6vh;
 border-radius: 14px; 
@@ -162,7 +229,12 @@ display: flex;
 &.glow{ 
  
 }
- &.glower{  
+&.selected{   
+    background: linear-gradient(
+    5deg
+    ,   transparent 0%,  #070707 20%, #000000 85%, transparent);
+}
+&.glower{  
     background-clip:text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;    
@@ -171,10 +243,23 @@ display: flex;
     0deg
     , #ffcc35  21%,  #ffeebb  24%, #aa7700 53%, transparent);
  }
+ &.selected{  
+    background: linear-gradient(
+    5deg
+    ,   transparent 0%,  #070707 20%, #000000 85%, transparent);
+}
+&:active{
+    transition: none;
+    margin-top:5px; 
+    background-color:black;
+}
+&:hover{ 
+    -webkit-text-stroke: 2px yellow;
+    filter: drop-shadow(0 0 0.75rem crimson);
+}
 `
 
-const DailyButtonDiv = styled.div`   
- 
+const DailyButtonDiv = styled.div`    
 border-radius: 14px; 
 border-radius: 10px; 
 padding: 0 50px 0 50px;
@@ -190,12 +275,40 @@ text-align: center;
 display: flex;
 flex-direction: column;
 justify-content: space-evenly;
-align-items: center;  
-&:hover{ 
-    transition: all 300ms ease-out;
-    -webkit-text-stroke: 2px yellow; 
-    
+align-items: center;   
+&.selected{
+    font-size: 2.9vh; 
+    background: linear-gradient(
+    5deg
+    ,   transparent 0%,  #070707 20%, #000000 85%, transparent);
 }
+&:active{
+    transition: none;
+    margin-top:5px;
+    font-size:2.5vh;
+    background-color:black;
+}
+&:hover{ 
+    -webkit-text-stroke: 2px yellow;
+    filter: drop-shadow(0 0 0.75rem crimson);
+}
+`
+
+const OtherBarDiv = styled.div`
+font-size:2.8vh;
+background-color: #232323;
+padding: 1vh 4vh 1vh 4vh;
+border-radius: 16px;
+cursor:pointer;
+width:calc(max(20vh,fit-content));
+height:50%;
+text-align: center;
+display: flex;
+flex-direction: column;
+justify-content: space-evenly;
+align-items: center;
+text-align: center;
+transition: all 100ms ease-in;
 `
 
 const BarButtonDiv = styled.div`
@@ -211,11 +324,29 @@ display: flex;
 flex-direction: column;
 justify-content: space-evenly;
 align-items: center;
+text-align: center;
+transition: all 100ms ease-in;
+filter: drop-shadow(0 0 0 crimson);
+&.selected{
+    font-size: 2.9vh;
+    color: #cceeff;
+    background: linear-gradient(
+    5deg
+    ,   transparent 0%,  #070707 20%, #000000 85%, transparent);  
+    filter: drop-shadow(0 0 0.2rem transparent) drop-shadow(0 0 0.2rem #121212);  
+}
+
+&:active{
+    padding: 0.95vh 4vh 0.95vh 4vh;
+    transition: none;
+    margin-top:0.1vh;
+    font-size:2.5vh;
+    background-color:black;
+}
+
 &:hover{ 
-    transition: all 300ms ease-out;
-    -webkit-text-stroke: 2px yellow;
+    //-webkit-text-stroke: 2px yellow;
     filter: drop-shadow(0 0 0.75rem crimson);
 }
-`
-
+` 
 export default MenuBar

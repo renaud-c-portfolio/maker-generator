@@ -11,17 +11,28 @@ const heavenChoir = new Howl({
     loop: false,
     volume: 0.15, 
   });
-
+let randomSeed = 999999;
+let timeSelect = "daily";
+let projectsSelect = "global";
+let globalTime = "";
 
 const initialState = {    
 
-        timeSelected: "daily",
-        projects: "global",
+        timeSelected: "",
+        projectsSelected: "global",
+        lastDay: 0,
+        lastWeek: 0,
+        lastMonth: 0,
+        lastSeason: 0,
+        lastYear: 0, 
+        
+
         currentMedia: "videogame",
         currentRarity: "",
         resultQuality: "common",
         globalTime: "",
-
+        userName: "",
+ 
         currentResult:{ 
 
             maker:["Temporary"],
@@ -32,6 +43,77 @@ const initialState = {
     },
 
 }
+
+Date.prototype.getWeek = function() {
+    var onejan = new Date(this.getFullYear(), 0, 1);
+    var millisecsInDay = 86400000;
+    return Math.ceil((((this - onejan) / millisecsInDay) + onejan.getDay() + 1) / 7);
+  };
+
+ 
+const setSeed = () => {
+    if (globalTime != "")
+    {
+ 
+
+        let _projData = 0;
+        projectsSelect.split("").forEach(element => { 
+            _projData+=element.charCodeAt(0);
+        });
+        let _day = 0;
+        let _weekday = 0;
+
+       if (timeSelect === "daily")
+       { 
+           _day = globalTime.getDate()+1;
+          _weekday = globalTime.getDay()+1;
+       } 
+
+       let _week = 0;
+       if (timeSelect === "daily" || timeSelect === "weekly")
+       {
+         _week = globalTime.getWeek();
+       } 
+
+       let _month = 0 
+       if (timeSelect != "seasonal" && timeSelect != "yearly")
+       {
+        _month = globalTime.getMonth()+1; 
+       }
+
+       let _season = 0;
+       if (timeSelect != "yearly")
+       {
+        _season = Math.floor(globalTime.getMonth()/4)+1;
+       } 
+
+       const _year = globalTime.getFullYear();
+       
+       let _bigNumber = ((_day*773)*(_day*773)+(_weekday*1523)*(_weekday*1523)+(_week*19)*(_week*19)+(_month*17)*(_month*17)+(_season*11)+(_season*11)+(52711*_year)*(52711*_year))*_projData;
+       let _gigaNumber = _bigNumber*_bigNumber;
+
+       randomSeed = _gigaNumber;  
+       console.log("seed was set ",_gigaNumber)
+    }
+    else
+    {
+        console.log("no time for it...")
+    } 
+} 
+
+const randomer = (data) => { 
+
+        
+    const _cool = (randomSeed % 10000)/10000*data;
+
+    let _newSeed = Math.floor(randomSeed/10000);
+    _newSeed = ((data+1)*(data+1)*(_cool+1)*1523*_newSeed)  % 10000000000000; 
+
+    randomSeed = _newSeed
+    return _cool;  
+}
+ 
+
 
 const corrections = (_string) => {
     let _str = _string.toLowerCase();
@@ -104,7 +186,7 @@ const parseString = (_string,_data,_mediaType) => {
             if ( _data.packages.hasOwnProperty(_keyword))
             {
                 console.log("cat")
-                const _rando = Math.floor(Math.random()*_data.packages[_keyword].length);
+                const _rando = Math.floor(randomer(_data.packages[_keyword].length));
                 _finalStr += _data.packages[_keyword][_rando]; 
             }
             else
@@ -136,9 +218,9 @@ const parseString = (_string,_data,_mediaType) => {
 
             if ( _data.keywords.indexOf(_keyword) >= 0 )
             {
-                const _rando = Math.floor(Math.random()*_data[_mediaType][_keyword].length);
+                const _rando = Math.floor(randomer(_data[_mediaType][_keyword].length));
                 _finalStr += _data[_mediaType][_keyword][_rando];
-                if (Math.random() > 0.1 || _keyword === "none"){ 
+                if (randomer(10) > 1 || _keyword === "none"){ 
                     _data[_keyword] -= 1;
                     _data[_mediaType][_keyword].splice(_rando,1);
                 }
@@ -174,7 +256,9 @@ const parseString = (_string,_data,_mediaType) => {
 
 
 
-//====REDUCER==================================
+//====REDUCER==============================================
+
+
 const reducer = (state, action) => { 
     switch(action.type) { 
  
@@ -188,29 +272,45 @@ const reducer = (state, action) => {
             ) 
         //--------------------------------
         case "set-date":  
+        globalTime = new Date(action.data);
+        globalTime = new Date(1995, 5, 3);
             return (
                 {
                     ...state,
-                    globalTime:action.data,
+                    globalTime:new Date(action.data),
                 }
             ) 
         //--------------------------------
-
-
+        case "change-project":
+            return (
+                {
+                    ...state,
+                    projectsSelected:action.data,
+                } 
+            )
+        case "change-time":
+            return (
+                {
+                    ...state,
+                    timeSelected:action.data,
+                } 
+            ) 
+                
         default:
             throw new Error(`Unrecognized action: ${action.type}`);
         break;
-        //---------the end----------===============
+        //---------the end----------====================================================
     }
 }
 
  
 
-
+///=================================provider functions====================
 export const AppProvider = ({ children }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
+    //send a random get to server and extracts server time from it
     const setDate = async (data) =>{
         fetch('/',
         {
@@ -225,13 +325,43 @@ export const AppProvider = ({ children }) => {
             type: "set-date",
             data: _date,
             })  
-        })  
-
-        
-
+        }) 
     }
- 
+    
+
+    const setSeedRandom = () => {
+         if (state.globalTime != "")
+         {
+            setSeed(); 
+         } 
+    } 
+   
+     
+    //change global section
+    const changeProject = (data) => { 
+        
+        projectsSelect = data;
+        dispatch({
+            type: "change-project",
+            data: data,
+            })  
+    }
+
+    //change time result
+    const changeTime = (data) => { 
+        
+        timeSelect = data;
+        dispatch({
+            type: "change-time",
+            data: data,
+            })  
+    }
+
+
+    //gets a result from the current 
     const getNewResult = (data) =>{ 
+
+        setSeed();
 
         console.log(data);
         let _data = structuredClone(DATA);
@@ -243,18 +373,18 @@ export const AppProvider = ({ children }) => {
             rarity:0,
         };
         let _rarity = 0;
-        if (Math.random() > 0.9)
+        if (randomer(10) > 5)
         {
             _rarity = 1;
         }
         
 
-        let _rando = Math.floor(Math.random()*DATA.mainStruct.length);
+        let _rando = Math.floor(randomer(DATA.mainStruct.length));
         let _newStr = _data.mainStruct[_rando];  
         _newStr = parseString(_newStr,_data,state.currentMedia);
         _newResult.mainTitle.push(_newStr);
 
-            _rando = Math.floor(Math.random()*_data.subStruct.length);
+            _rando = Math.floor(randomer(_data.subStruct.length));
             _newStr = _data.subStruct[_rando];  
             _newStr = parseString(_newStr,_data,state.currentMedia);
             _newResult.mainTitle.push(_newStr); 
@@ -263,59 +393,61 @@ export const AppProvider = ({ children }) => {
             if (_rarity)
             {
                 
-            _rando = Math.floor(Math.random()*_data.subStruct.length);
+            _rando = Math.floor(randomer(_data.subStruct.length));
             _newStr = _data.subStruct[_rando];  
             _newStr = parseString(_newStr,_data,state.currentMedia);
             _newResult.mainTitle.push(_newStr);
             
              }
     
-        _rando = Math.floor(Math.random()*_data.detailStruct.length);
+        _rando = Math.floor(randomer(_data.detailStruct.length));
         _newStr = _data.detailStruct[_rando];
         _newStr = parseString(_newStr,_data,state.currentMedia);
         _newResult.subTitle.push(_newStr);
 
-        _rando = Math.floor(Math.random()*_data.detailStruct.length);
+        _rando = Math.floor(randomer(_data.detailStruct.length));
         _newStr = _data.detailStruct[_rando];  
         _newStr = parseString(_newStr,_data,state.currentMedia);
         _newResult.subTitle.push(_newStr);
 
-        _rando = Math.floor(Math.random()*_data.detailStruct.length);
+        _rando = Math.floor(randomer(_data.detailStruct.length));
         _newStr = _data.detailStruct[_rando];  
         _newStr = parseString(_newStr,_data,state.currentMedia);
         _newResult.subTitle.push(_newStr);
 
         if (_rarity)
             {
-                _rando = Math.floor(Math.random()*_data.detailStruct.length);
+                _rando = Math.floor(randomer(_data.detailStruct.length));
                 _newStr = _data.detailStruct[_rando];  
                 _newStr = parseString(_newStr,_data,state.currentMedia);
                 _newResult.subTitle.push(_newStr);
 
-                _rando = Math.floor(Math.random()*_data.detailStruct.length);
+                _rando = Math.floor(randomer(_data.detailStruct.length));
                 _newStr = _data.detailStruct[_rando];  
                 _newStr = parseString(_newStr,_data,state.currentMedia);
                 _newResult.subTitle.push(_newStr);
 
-                _rando = Math.floor(Math.random()*_data.detailStruct.length);
+                _rando = Math.floor(randomer(_data.detailStruct.length));
                 _newStr = _data.detailStruct[_rando];  
                 _newStr = parseString(_newStr,_data,state.currentMedia);
                 _newResult.subTitle.push(_newStr);
 
-                _rando = Math.floor(Math.random()*_data.detailStruct.length);
+                _rando = Math.floor(randomer(_data.detailStruct.length));
                 _newStr = _data.detailStruct[_rando];  
                 _newStr = parseString(_newStr,_data,state.currentMedia);
                 _newResult.subTitle.push(_newStr);
             
                  heavenChoir.play();
             } 
-
+            console.log("da resulto",_newResult);
          _newResult.rarity = _rarity;
             dispatch({
             type: "get-new-result",
             data: _newResult,
             })  
     }
+
+
  
     
     return (
@@ -324,8 +456,11 @@ export const AppProvider = ({ children }) => {
 
             state,  
             actions: {    
+                changeProject,changeTime,
                 getNewResult,
                 setDate,
+                setSeedRandom,
+                randomer,
             },
           }}
         >
