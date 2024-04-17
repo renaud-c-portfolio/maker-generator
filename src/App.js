@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {styled, keyframes} from 'styled-components';
 
 //created components
+import Projects from './Projects';
 import GlobalStyles from './GlobalStyles';
 import MenuBar from './MenuBar';
 import MainDisplay from './MainDisplay'; 
@@ -13,10 +14,16 @@ function App() {
   return (
     <> 
     <GlobalStyles/> 
+    <Router>
     <MainAppDiv className="App">  
       <MenuBar/>
-      <MainDisplay/>
+      <Routes>
+        <Route path="/" element={<MainDisplay/>} />
+        <Route path="/projects" element={<Projects/>} />
+        
+       </Routes>
     </MainAppDiv>
+    </Router>
     </>
   );
 }

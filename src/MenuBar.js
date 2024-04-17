@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import {styled, keyframes} from 'styled-components'; 
 
 import { AppContext } from './AppContext';
@@ -9,22 +9,29 @@ const MenuBar = () =>{
  
     const {
         actions: {   
+            changeMedia,
+
             getNewResult,
             setDate,
             changeProject, changeTime, 
             setSeedRandom, randomer,
+
+            loadProjects,
         },
         state: { 
+            currentMedia,
             currentResult,
             globalTime,
             timeSelected, projectsSelected,
             
         },
     } = useContext(AppContext);
+ 
 
     useEffect(
         ()=>{
             setDate();
+            loadProjects();
         }
     ,[])
 
@@ -44,40 +51,58 @@ const MenuBar = () =>{
                     
                     <span>media type:  
                 <span> </span>
-                <MediaSelect>
+                <MediaSelect
+                onChange = {(event)=>{
+                    changeMedia(event.target.value);
+                }}
+                >
                     <MediaOption>videogame</MediaOption>
                     <MediaOption>boardgame</MediaOption>
                     <MediaOption>story</MediaOption>
-                    <MediaOption>character design</MediaOption>
-                    <MediaOption>creature design</MediaOption>
+                    <MediaOption>characterDesign</MediaOption>
+                    <MediaOption>creatureDesign</MediaOption>
+                    <MediaOption>worldDesign</MediaOption>
                 </MediaSelect></span>
                 </OtherBarDiv>
 
-                <BarButtonDiv
+                <Link to='/'><BarButtonDiv
                     onClick={()=>{
-                        changeProject("global");
-                        getNewResult(1);
+                        changeProject("global"); 
+                        getNewResult(0);
                     }}
                     {...( projectsSelected === "global" ? {className:"selected"}:{})}
-                    >Global</BarButtonDiv>
-                <BarButtonDiv
+                    >Global</BarButtonDiv></Link>
+                <Link to='/'><BarButtonDiv
                     onClick={()=>{
                         changeProject("personal");
                         getNewResult(1);
                     }}
                     {...( projectsSelected === "personal" ? {className:"selected"}:{})}
-                >Personal</BarButtonDiv>
-                <BarButtonDiv
+                >Personal</BarButtonDiv></Link>
+                <Link to='/'><BarButtonDiv
                     onClick={()=>{
-                        changeProject("project");
-                        getNewResult(1);
+                        changeProject("project"); 
+                        getNewResult(2);
                     }}
                     {...( projectsSelected === "project" ? {className:"selected"}:{})}
-                >Projects only</BarButtonDiv>
-                <BarButtonDiv>Setup Projects</BarButtonDiv> 
+                >Projects only</BarButtonDiv></Link>
+                <Link to='/projects'><BarButtonDiv
+                 onClick={()=>{
+                    changeProject("");
+                 }}
+                >Setup Projects</BarButtonDiv></Link>
                 <BarButtonDiv>History</BarButtonDiv> 
             </FirstBarDiv>
-        <SecondBarDiv>
+            { window.location.pathname === "/" && 
+            (
+
+           
+        <SecondBarDiv
+        onClick={()=>{
+
+            console.log("window:",window.location.pathname)
+        }}
+         >
               <div></div>
               <DailyButtonDiv
               style={{fontSize:"5vh"}}
@@ -134,7 +159,7 @@ const MenuBar = () =>{
                
               <div></div>
               <div></div>
-        </SecondBarDiv>
+        </SecondBarDiv> )}
         </BarDiv>
         </>
     )
@@ -152,6 +177,7 @@ align-items: center;
 background-color: #232323;
 padding-left:4%;
 padding-right:12%;
+padding-bottom:0.5%;
 `
 
 const SecondBarDiv = styled.div`

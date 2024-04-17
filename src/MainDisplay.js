@@ -12,10 +12,15 @@ const MainDisplay = () =>{
             getNewResult,
         },
         state: { 
+            currentMedia,
             currentResult,
         },
     } = useContext(AppContext);
  
+    useEffect(()=>{
+        
+        getNewResult(1);
+    },[currentMedia])
 
     
 
